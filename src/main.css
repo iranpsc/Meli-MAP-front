@@ -1,0 +1,41 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    fill-opacity:0.5;
+}
+:root {
+    --leaflet-tile-filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.7);
+}
+
+
+    .leaflet-tile {
+        filter: var(--leaflet-tile-filter, none);
+    }
+
+    .leaflet-container {
+        background: #303030;
+    }
+
+
+.leaflet-control-attribution.leaflet-control {
+    display: none;
+}
+
+.color-btn {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: none;
+    margin-right: 8px;
+}
+
+.color-btn:hover {
+    opacity: 0.6;
+    cursor: pointer;
+}
+
+.Toastify {
+    font-size: 14px;
+    font-weight: bold;
+}
