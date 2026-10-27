@@ -11,7 +11,9 @@ import "./style.css";
 setWorkerUrl(mapLibreWorkerUrl);
 
 const apiBaseUrl = (
-  import.meta.env.VITE_API_BASE_URL || "http://map.metarang.com"
+  import.meta.env.VITE_API_BASE_URL ||
+  "https://map.metarang.com" ||
+  "http://map.metarang.com"
 ).replace(/\/+$/, "");
 const resolveApiUrl = (url) =>
   new URL(url, `${apiBaseUrl}/`).href
