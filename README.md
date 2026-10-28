@@ -1,46 +1,59 @@
-# Getting Started with Create React App and Redux
+# Meli MAP Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), using the [Redux](https://redux.js.org/) and [Redux Toolkit](https://redux-toolkit.js.org/) template.
+Standalone MapLibre and Three.js frontend for Meli MAP. The map style, vector TileJSON, and FBX models are kept in this repository; map tiles and fonts are requested from the separately deployed backend API.
 
-## Available Scripts
+## Run locally
 
-In the project directory, you can run:
+Requirements: Node.js 22+ and npm.
 
-### `npm start`
+```powershell
+npm ci
+Copy-Item .env.example .env
+npm run dev
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Set `VITE_API_BASE_URL` in `.env` to the reachable backend URL. The default is `http://localhost:3001`. Open the URL printed by Vite (usually `http://localhost:5173`).
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Build and run with Docker
 
-### `npm test`
+Start the frontend with Docker Compose:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```powershell
+docker compose up --build
+```
 
-### `npm run build`
+Open [http://localhost:8080](http://localhost:8080). Compose uses `http://localhost:3001` as the default backend URL and publishes the frontend on port `8080`. Override either value in a `.env` file next to `docker-compose.yml`:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```dotenv
+VITE_API_BASE_URL=http://localhost:3001
+FRONTEND_PORT=8080
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+The API URL is embedded in the frontend at build time, so rebuild after changing it. Stop the frontend with `docker compose down`.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+The frontend is a static Nginx image. Supply the backend URL when building because Vite embeds it in the frontend bundle:
 
-### `npm run eject`
+```powershell
+docker build --build-arg VITE_API_BASE_URL=http://localhost:3001 -t meli-map-frontend .
+docker run --rm -p 8080:80 meli-map-frontend
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Open [http://localhost:8080](http://localhost:8080). For deployment, replace the build argument with the public backend API URL and configure the backend's `CORS_ORIGIN` to include the frontend origin.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Map files
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+- `src/main.js`: MapLibre configuration, API URL, and FBX placement.
+- `src/style.css`: Map container styling.
+- `public/styleMap.json`: Map layers, labels, and visual styling.
+- `public/tile.json`: Vector tile URL template and metadata.
+- `public/*.fbx`: Models placed at map coordinates; click a map marker to zoom to a model.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Models load when the map is zoomed in to level 16 or higher.
 
-## Learn More
+## Production build
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```powershell
+npm run build
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+The generated `dist/` directory is ignored by Git and is created automatically in the Docker build.
