@@ -10,11 +10,16 @@ import "./style.css";
 
 setWorkerUrl(mapLibreWorkerUrl);
 
+const hostname = window.location.hostname;
+
 const apiBaseUrl = (
-  import.meta.env.VITE_API_BASE_URL ||
-  "https://map.metarang.com" ||
-  "http://map.metarang.com"
+  hostname === "localhost" || hostname === "127.0.0.1"
+    ? import.meta.env.VITE_API_BASE_URL || "http://localhost:3001/"
+    : hostname === "map.metarang.com"
+      ? "https://api-map.metarang.com/"
+      : import.meta.env.VITE_API_BASE_URL || "https://api-map.metarang.com/"
 ).replace(/\/+$/, "");
+
 const resolveApiUrl = (url) =>
   new URL(url, `${apiBaseUrl}/`).href
     .replace(/%7B/gi, "{")
